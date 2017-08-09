@@ -17,6 +17,10 @@ class Piece
   def valid_move(pos)
     return false unless @board.in_bounds?(pos)
     return false if @board[pos].color == @color
+    new_board = @board.dup
+    new_board.move_piece(@current_pos, pos)
+    return false if new_board.in_check?(@color)
+
     true
   end
 end
