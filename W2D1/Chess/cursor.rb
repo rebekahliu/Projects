@@ -1,5 +1,5 @@
 require "io/console"
-
+require 'byebug'
 KEYMAP = {
   " " => :space,
   "h" => :left,
@@ -32,13 +32,16 @@ MOVES = {
 
 class Cursor
 
-  attr_reader :cursor_pos, :board, :selected_pos, :selected
+  attr_reader :cursor_pos, :board,  :selected
+  attr_accessor :start_pos, :end_pos, :selected_pos
 
   def initialize(cursor_pos, board)
     @cursor_pos = cursor_pos
     @board = board
     @selected = false
     @selected_pos = []
+    @start_pos = nil
+    @end_pos = nil
   end
 
   def get_input
@@ -81,8 +84,21 @@ class Cursor
     case key
     when :return , :space
       toggle_selected
-      @selected_pos = @cursor_pos.dup
-      return @cursor_pos
+
+      if @start_pos
+        @end_pos = @cursor_pos
+      else
+        @start_pos = @cursor_pos
+        @selected_pos = @cursor_pos
+      end
+
+      if @start_pos && @end_pos
+        @board.move_piece(@start_pos, @end_pos)
+        @start_pos = nil
+        @end_pos = nil
+        @selected_pos = []
+      end
+
     when :left , :right , :up , :down
       update_pos(MOVES[key])
     when :ctrl_c
@@ -101,6 +117,10 @@ class Cursor
 
   def toggle_selected
     @selected == false ? @selected = true : @selected = false
+  end
+
+  def select_piece
+
   end
 
 end

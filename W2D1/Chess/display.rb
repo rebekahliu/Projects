@@ -28,6 +28,7 @@ class Display
     until false
       system("clear")
       render
+      p "Board in check:#{@board.in_check?}"
       @cursor.get_input
     end
   end
