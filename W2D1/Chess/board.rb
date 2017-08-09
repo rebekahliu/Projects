@@ -78,7 +78,7 @@ class Board
     # self[pos] != nil
   end
 
-  def in_check?
+  def in_check?(color)
     possible_moves = []
     @grid.each do |row|
       row.each do |piece|
@@ -87,7 +87,7 @@ class Board
     end
 
     possible_moves.each do |move|
-      return true if self[move].is_a?(King)
+      return true if self[move].is_a?(King) && color == self[move].color
     end
 
     false
