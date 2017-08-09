@@ -28,7 +28,7 @@ class Board
         if row == 0 || row == 7
           populate_last_row(row, space, color)
         elsif row == 1 || row == 6
-          self[pos] = Pawn.new(color, pos)
+          self[pos] = Pawn.new(color, pos, self)
         else
           self[pos] = NULL
         end
@@ -40,15 +40,15 @@ class Board
   def populate_last_row(row, space, color)
     pos = [row, space]
     if space.zero? || space == 7
-      self[pos] = Rook.new(color, pos)
+      self[pos] = Rook.new(color, pos, self)
     elsif space == 1 || space == 6
-      self[pos] = Knight.new(color, pos)
+      self[pos] = Knight.new(color, pos, self)
     elsif space == 2 || space == 5
-      self[pos] = Bishop.new(color, pos)
+      self[pos] = Bishop.new(color, pos, self)
     elsif space == 3
-      self[pos] = Queen.new(color, pos)
+      self[pos] = Queen.new(color, pos, self)
     elsif space == 4
-      self[pos] = King.new(color, pos)
+      self[pos] = King.new(color, pos, self)
     end
   end
 
@@ -63,20 +63,38 @@ class Board
   end
 
   def move_piece(start_pos, end_pos)
+
     raise "No piece found" if self[start_pos].is_a?(NullPiece)
-    raise "Not valid move" if self[end_pos].color == self[start_pos].color
-    # raise "Not on board" if self[end_pos].nil?
-
-    self[end_pos] = self[start_pos]
-    self[start_pos] = NULL
-
-    self[end_pos].current_pos = end_pos
+    if self[start_pos].moves.include?(end_pos)
+      self[end_pos] = self[start_pos]
+      self[start_pos] = NULL
+      self[end_pos].current_pos = end_pos
+    end
   end
 
 
   def in_bounds?(pos)
     pos.all?{|n| (0..7).include?(n)}
     # self[pos] != nil
+  end
+
+  def in_check?
+    possible_moves = []
+    @grid.each do |row|
+      row.each do |piece|
+        possible_moves += piece.moves unless piece.is_a?(NullPiece)
+      end
+    end
+
+    possible_moves.each do |move|
+      return true if self[move].is_a?(King)
+    end
+
+    false
+  end
+
+  def checkmate
+
   end
 
 end

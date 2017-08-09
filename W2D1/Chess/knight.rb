@@ -1,8 +1,21 @@
 require_relative 'piece'
+require_relative 'module'
 
 class Knight < Piece
-  def initialize(color, pos)
+  include SteppingPiece
+
+  def initialize(color, pos, board)
     @sym = "N"
+    @move_dir = [
+      [-1,2],
+      [1,2],
+      [2,1],
+      [2,-1],
+      [1,-2],
+      [-1,-2],
+      [-2,-1],
+      [-2,1]
+    ]
     super
   end
 end
